@@ -17,7 +17,7 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \ 
     curl file python && \
     curl -O https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
-    if [ ! -z ${CI_REGISTRY} ]; then OUTPUT=">> /dev/null"; fi && \
+    if [ ! -z ${CI_REGISTRY} ]; then OUTPUT="&>/dev/null"; fi && \
     python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} ${OUTPUT} && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
