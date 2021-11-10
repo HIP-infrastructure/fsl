@@ -31,7 +31,8 @@ RUN apt-get update && \
 ENV APP_SHELL="yes"
 ENV APP_CMD=""
 ENV PROCESS_NAME=""
-ENV DIR_ARRAY=""
+ENV APP_DATA_DIR_ARRAY=""
+ENV DATA_DIR_ARRAY=""
 ENV CONFIG_ARRAY=".bash_profile"
 
 HEALTHCHECK --interval=10s --timeout=10s --retries=5 --start-period=30s \
