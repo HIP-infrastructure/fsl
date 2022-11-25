@@ -22,9 +22,7 @@ RUN apt-get update && \
     curl file python locales libquadmath0 && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
     curl -O# https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
-    #if [ ! -z ${CI_REGISTRY} ]; then SILENT="-q"; fi && \
-    python fslinstaller.py ${SILENT} -d /usr/local/fsl -V ${APP_VERSION} && \
-    /usr/local/fsl/fslpython/envs/fslpython/bin/pip install fsleyes-props==1.7.2 && \
+    python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
     apt-get remove -y --purge curl file && \
