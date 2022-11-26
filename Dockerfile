@@ -22,8 +22,8 @@ RUN apt-get update && \
     curl file python locales libquadmath0 && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
     curl -O# https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
-    if [ ! -z ${CI_REGISTRY} ]; then SILENT="1> /dev/null"; fi && \
-    python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} ${SILENT} && \
+    if [ ! -z ${CI_REGISTRY} ]; then exec 3>/dev/null 1>&3; else exec 3>&1; fi && \
+    python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} >&3 && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
     apt-get remove -y --purge curl file && \
