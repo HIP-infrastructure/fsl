@@ -19,11 +19,11 @@ WORKDIR /apps/${APP_NAME}
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \ 
-    curl file python locales libquadmath0 && \
+    curl file python locales libquadmath0 ca-certificates && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
     curl -O# https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
-    if [ ! -z ${CI_REGISTRY} ]; then exec 3>/dev/null 1>&3; else exec 3>&1; fi && \
-    python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} >&3 && \
+    if [ ! -z ${CI_REGISTRY} ]; then sed -i -E -e 's,(^\s*prog.update|^\s*progress)\(,\1\,\(,' fslinstaller.py; fi && \
+    python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
     apt-get remove -y --purge curl file && \
