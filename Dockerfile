@@ -1,7 +1,8 @@
 ARG CI_REGISTRY_IMAGE
+ARG TAG
 ARG DOCKERFS_TYPE
 ARG DOCKERFS_VERSION
-FROM ${CI_REGISTRY_IMAGE}/${DOCKERFS_TYPE}:${DOCKERFS_VERSION}
+FROM ${CI_REGISTRY_IMAGE}/${DOCKERFS_TYPE}:${DOCKERFS_VERSION}${TAG}
 LABEL maintainer="nathalie.casati@chuv.ch"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -11,17 +12,18 @@ ARG APP_NAME
 ARG APP_VERSION
 
 LABEL app_version=$APP_VERSION
+LABEL app_tag=$TAG
 
 WORKDIR /apps/${APP_NAME}
 
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \ 
-    curl file python locales libquadmath0 && \
+    curl file python locales libquadmath0 ca-certificates && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
     curl -O# https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
-    if [ ! -z ${CI_REGISTRY} ]; then SILENT="-q"; fi && \
-    python fslinstaller.py ${SILENT} -d /usr/local/fsl -V ${APP_VERSION} && \
+    if [ ! -z ${CI_REGISTRY} ]; then sed -i -E -e 's,(^\s*prog.update|^\s*progress)\(,\1\,\(,' fslinstaller.py; fi && \
+    python fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
     apt-get remove -y --purge curl file && \
