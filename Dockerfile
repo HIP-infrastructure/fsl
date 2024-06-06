@@ -21,9 +21,15 @@ RUN apt-get update && \
     apt-get install --no-install-recommends -y \ 
     curl file python3 locales libquadmath0 ca-certificates && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
-    curl -sSO https://fsl.fmrib.ox.ac.uk/fsldownloads/fslinstaller.py && \
+    curl -sSO https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py && \
     if [ ! -z ${CI_REGISTRY} ]; then sed -i -E -e 's,(^\s*prog.update|^\s*progress)\(,\1\,\(,' fslinstaller.py; fi && \
-    python3 fslinstaller.py -d /usr/local/fsl -V ${APP_VERSION} && \
+    python3 fslinstaller.py \
+    -d /usr/local/fsl \
+    -V ${APP_VERSION} \
+    --no_self_update \
+    --skip_registration \
+    --throttle_downloads \
+    && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
     apt-get remove -y --purge curl file && \
