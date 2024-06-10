@@ -5,7 +5,6 @@ ARG DOCKERFS_VERSION
 FROM ${CI_REGISTRY_IMAGE}/${DOCKERFS_TYPE}:${DOCKERFS_VERSION}${TAG}
 LABEL maintainer="nathalie.casati@chuv.ch"
 
-ARG DEBIAN_FRONTEND=noninteractive
 ARG CARD
 ARG CI_REGISTRY
 ARG APP_NAME
@@ -16,19 +15,18 @@ LABEL app_tag=$TAG
 
 WORKDIR /apps/${APP_NAME}
 
+ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && \
     apt-get upgrade -y && \
     apt-get install --no-install-recommends -y \ 
-        curl file python3 locales libquadmath0 ca-certificates && \
+        curl file python3 locales libquadmath0 ca-certificates libgomp1 && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
     curl -sSO https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py && \
-    if [ ! -z ${CI_REGISTRY} ]; then sed -i -E -e 's,(^\s*prog.update|^\s*progress)\(,\1\,\(,' fslinstaller.py; fi && \
-    python3 fslinstaller.py \
+    python3 ./fslinstaller.py \
         -d /usr/local/fsl \
         -V ${APP_VERSION} \
         --no_self_update \
         --skip_registration \
-        --throttle_downloads \
     && \
     rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
