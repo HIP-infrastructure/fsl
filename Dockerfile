@@ -15,22 +15,30 @@ LABEL app_tag=$TAG
 
 WORKDIR /apps/${APP_NAME}
 
+# The sed expression is silencing `printmsg` calls with end=\r that are causing
+# a lot of logs to be outputted. They don't play well with GitLab (and other CI
+# in general).
 ARG DEBIAN_FRONTEND=noninteractive
+ADD https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py .
 RUN apt-get update && \
     apt-get upgrade -y && \
-    apt-get install --no-install-recommends -y \ 
-        curl file python3 locales libquadmath0 ca-certificates libgomp1 && \
+    apt-get install --no-install-recommends -y \
+        ca-certificates \
+        dc \
+        file \
+        libgomp1 \
+        libquadmath0 \
+        locales \
+        python3 && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
-    curl -sSO https://fsl.fmrib.ox.ac.uk/fsldownloads/fslconda/releases/fslinstaller.py && \
+    sed -i -E "s/(printmsg\(([^,]+, )?end='(\\\\r)?')/# SILENE \\1/g" ./fslinstaller.py && \
     python3 ./fslinstaller.py \
         -d /usr/local/fsl \
         -V ${APP_VERSION} \
         --no_self_update \
         --skip_registration \
     && \
-    rm fslinstaller.py && \
     rm -rf /usr/local/fsl/src && \
-    apt-get remove -y --purge curl file && \
     apt-get autoremove -y --purge && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
