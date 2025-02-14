@@ -31,7 +31,7 @@ RUN apt-get update && \
         locales \
         python3 && \
     locale-gen en_US.UTF-8 en_GB.UTF-8 && \
-    sed -i -E "s/(printmsg\(([^,]+, )?end='(\\\\r)?')/# SILENE \\1/g" ./fslinstaller.py && \
+    sed -i -E "s/(printmsg\(([^,]+, )?end='(\\\\r)?')/# SILENCE \\1/g" ./fslinstaller.py && \
     python3 ./fslinstaller.py \
         -d /usr/local/fsl \
         -V ${APP_VERSION} \
