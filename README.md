@@ -1,3 +1,6 @@
+## Check the link below for new releases 
+
+[FSL release history](https://fsl.fmrib.ox.ac.uk/fsl/docs/#/development/history/index)
 
 ## Acknowledgement
 
